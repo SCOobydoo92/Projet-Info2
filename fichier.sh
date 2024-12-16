@@ -10,7 +10,7 @@ fi
 chemin_fichier_csv=$1
 type_station=$2
 type_consommateur=$3
-identifiant_centrale=${4:--1}  # Par défaut, -1 indique aucun identifiant
+identifiant_centrale=${4:--1}  # Par défaut, -1 indique aucun identifiant de centrale
 
 # Vérification des types de station et consommateur
 if [[ "$type_station" != "hvb" && "$type_station" != "hva" && "$type_station" != "lv" ]]; then
@@ -70,8 +70,13 @@ if [[ "$type_station" == "lv" && "$type_consommateur" == "all" ]]; then
         echo "Erreur: gnuplot n'est pas installé. Ignorer la génération des graphiques."
     else
         echo "Génération des graphiques..."
-        gnuplot -e "set terminal png; set output 'graphs/lv_all_minmax.png'; plot '$temp_output' using 2:xtic(1) with bars"
+        gnuplot -e "set terminal png; set output 'graphs/lv_all_minmax.png'; \
+                     set boxwidth 0.5; set style fill solid; \
+                     set title 'Consommation LV'; \
+                     set xlabel 'Stations'; set ylabel 'Consommation'; \
+                     plot '$temp_output' using 2:xtic(1) with bars"
     fi
 fi
 
-echo "Traitement terminé."
+# Nettoyage et fin
+echo "Traitement terminé. Résultats dans $temp_output"
