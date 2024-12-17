@@ -308,3 +308,8 @@ int main(int argc, char *argv[]) {
     printf("Analyse terminée. Résultats dans %s\n", fichierSortie);
     return EXIT_SUCCESS;
 }
+
+    libererArbre(arbre);
+    printf("Analyse terminée. Résultats dans %s\n", fichierSortie);
+    return EXIT_SUCCESS;
+}
