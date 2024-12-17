@@ -221,7 +221,7 @@ void extraireStationsExtremes(Arbre a, const char *nomFichier) {
         return;
     }
 
-    analyserStationsTriees(a, NULL, struct NoeudAVL **, &nombreNoeuds);
+    analyserStationsTriees(a, NULL, tableau, &nombreNoeuds);
 
     // Vérification du dépassement de mémoire
     if (nombreNoeuds > MAX_NODES) {
