@@ -18,15 +18,17 @@ typedef struct NoeudAVL {
 // Fonction pour créer un nouveau nœud
 Arbre creerArbre(int e, long capacite, long consommation, const char *type) {
     Arbre a = (Arbre)malloc(sizeof(NoeudAVL));
-    if (a != NULL) {
-        a->element = e;
-        a->equilibre = 0;
-        a->capacite = capacite;
-        a->consommation = consommation;
-        snprintf(a->type, sizeof(a->type), "%s", type);
-        a->fg = NULL;
-        a->fd = NULL;
+    if (a == NULL) {
+        perror("Erreur d'allocation de mémoire pour le nœud");
+        exit(EXIT_FAILURE); // Arrêt si allocation échoue
     }
+    a->element = e;
+    a->equilibre = 0;
+    a->capacite = capacite;
+    a->consommation = consommation;
+    snprintf(a->type, sizeof(a->type), "%s", type);
+    a->fg = NULL;
+    a->fd = NULL;
     return a;
 }
 
@@ -171,7 +173,7 @@ void ecrireStationsTriees(Arbre a, FILE *sortie) {
     int nombreNoeuds = 0;
     Arbre *tableau = malloc(MAX_NODES * sizeof(Arbre));
     if (tableau == NULL) {
-        perror("Erreur d'allocation de mémoire");
+        perror("Erreur d'allocation de mémoire pour le tableau des stations");
         return;
     }
 
@@ -210,7 +212,7 @@ void extraireStationsExtremes(Arbre a, const char *nomFichier) {
     int nombreNoeuds = 0;
     Arbre *tableau = malloc(MAX_NODES * sizeof(Arbre));
     if (tableau == NULL) {
-        perror("Erreur d'allocation de mémoire");
+        perror("Erreur d'allocation de mémoire pour le tableau des stations extrêmes");
         return;
     }
 
@@ -281,9 +283,11 @@ int main(int argc, char *argv[]) {
     const char *typeConsommateur = argv[4];
     int idCentrale = (argc == 6) ? atoi(argv[5]) : -1;
 
+    printf("Lecture du fichier CSV...\n");
     Arbre arbre = NULL;
     lireFichierCSV(fichierCSV, &arbre, typeStation, typeConsommateur, idCentrale);
 
+    printf("Ouverture du fichier de sortie...\n");
     FILE *sortie = fopen(fichierSortie, "w");
     if (sortie == NULL) {
         perror("Erreur lors de l'ouverture du fichier de sortie");
@@ -296,6 +300,7 @@ int main(int argc, char *argv[]) {
     fclose(sortie);
 
     if (strcmp(typeStation, "lv") == 0 && strcmp(typeConsommateur, "all") == 0) {
+        printf("Extraction des stations extrêmes...\n");
         extraireStationsExtremes(arbre, "lv_all_minmax.csv");
     }
 
