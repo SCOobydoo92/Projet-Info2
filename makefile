@@ -1,5 +1,5 @@
 # Nom de l'exécutable final
-TARGET = cwire
+TARGET = c-wire_v00(2).dat
 
 # Compilateur utilisé
 CC = gcc
