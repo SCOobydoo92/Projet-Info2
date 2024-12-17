@@ -3,6 +3,7 @@
 #include <string.h>
 
 #define MAX_LINE_LENGTH 1024
+#define MAX_NODES 100000  // Taille maximale du tableau de nœuds
 
 typedef struct NoeudAVL {
     int element;       // Identifiant de la station
@@ -10,8 +11,8 @@ typedef struct NoeudAVL {
     long capacite;     // Capacité de transfert ou production
     long consommation; // Somme des consommations des clients
     char type[10];     // Champ pour le type (HV-B, HV-A, LV)
-    struct NoeudAVL *fg; 
-    struct NoeudAVL *fd; 
+    struct NoeudAVL *fg;
+    struct NoeudAVL *fd;
 } NoeudAVL, *Arbre;
 
 // Fonction pour créer un nouveau nœud
@@ -127,7 +128,7 @@ void lireFichierCSV(const char *nomFichier, Arbre *arbre, const char *typeStatio
         char type[10] = "";
 
         // Extraction des données selon le format attendu
-        if (sscanf(ligne, "%d;%d;%ld;%ld;%s", &idStation, &idParentCentrale, &capacite, &consommation, type) < 5) {
+        if (sscanf(ligne, "%d;%d;%ld;%ld;%s", &idStation, &idParentCentrale, &capacite, &consommation, type) != 5) {
             fprintf(stderr, "Erreur dans la ligne : %s\n", ligne);
             continue;
         }
@@ -168,13 +169,20 @@ void analyserStationsTriees(Arbre a, FILE *sortie, Arbre **tableau, int *index) 
 // Fonction pour trier et écrire les stations dans le fichier de sortie
 void ecrireStationsTriees(Arbre a, FILE *sortie) {
     int nombreNoeuds = 0;
-    Arbre *tableau = malloc(100000 * sizeof(Arbre));
+    Arbre *tableau = malloc(MAX_NODES * sizeof(Arbre));
     if (tableau == NULL) {
         perror("Erreur d'allocation de mémoire");
         return;
     }
 
     analyserStationsTriees(a, sortie, tableau, &nombreNoeuds);
+
+    // Vérification du dépassement de mémoire
+    if (nombreNoeuds > MAX_NODES) {
+        fprintf(stderr, "Trop de stations pour allouer suffisamment de mémoire\n");
+        free(tableau);
+        return;
+    }
 
     // Trier par capacité croissante
     for (int i = 0; i < nombreNoeuds - 1; i++) {
@@ -200,7 +208,7 @@ void ecrireStationsTriees(Arbre a, FILE *sortie) {
 // Fonction pour extraire les 10 stations LV les plus et moins chargées
 void extraireStationsExtremes(Arbre a, const char *nomFichier) {
     int nombreNoeuds = 0;
-    Arbre *tableau = malloc(100000 * sizeof(Arbre));
+    Arbre *tableau = malloc(MAX_NODES * sizeof(Arbre));
     if (tableau == NULL) {
         perror("Erreur d'allocation de mémoire");
         return;
@@ -214,6 +222,14 @@ void extraireStationsExtremes(Arbre a, const char *nomFichier) {
     }
 
     analyserStationsTriees(a, NULL, tableau, &nombreNoeuds);
+
+    // Vérification du dépassement de mémoire
+    if (nombreNoeuds > MAX_NODES) {
+        fprintf(stderr, "Trop de stations pour allouer suffisamment de mémoire\n");
+        free(tableau);
+        fclose(fichierMinMax);
+        return;
+    }
 
     // Trier par consommation décroissante pour extraire les extrêmes
     for (int i = 0; i < nombreNoeuds - 1; i++) {
