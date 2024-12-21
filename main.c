@@ -177,7 +177,7 @@ void ecrireStationsTriees(Arbre a, FILE *sortie) {
         return;
     }
 
-    analyserStationsTriees(a, sortie, tableau, &nombreNoeuds);
+    analyserStationsTriees(a, sortie, struct NoeudAVL **, &nombreNoeuds);
 
     // Vérification du dépassement de mémoire
     if (nombreNoeuds > MAX_NODES) {
@@ -223,7 +223,7 @@ void extraireStationsExtremes(Arbre a, const char *nomFichier) {
         return;
     }
 
-    analyserStationsTriees(a, NULL, tableau, &nombreNoeuds);
+    analyserStationsTriees(a, NULL, struct NoeudAVL **, &nombreNoeuds);
 
     // Vérification du dépassement de mémoire
     if (nombreNoeuds > MAX_NODES) {
@@ -305,11 +305,11 @@ int main(int argc, char *argv[]) {
     }
 
     libererArbre(arbre);
-    printf("Analyse terminée. Résultats dans %s\n", fichierSortie);
+    printf("Analyse terminée. Résultats dans %s\n", fichierSortie);{
     return EXIT_SUCCESS;
 }
 
     libererArbre(arbre);
     printf("Analyse terminée. Résultats dans %s\n", fichierSortie);
     return EXIT_SUCCESS;
-}
+} 
