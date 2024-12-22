@@ -6,7 +6,6 @@ if [ "$#" -lt 3 ]; then
     exit 1
 fi
 
-# Assignation des paramètres
 chemin_fichier_csv=$1
 type_station=$2
 type_consommateur=$3
@@ -47,7 +46,6 @@ fi
 # Création des dossiers tmp et graphs si nécessaires
 mkdir -p tmp graphs
 
-# Vider le dossier tmp
 rm -rf tmp/*
 
 # Lancer le traitement
